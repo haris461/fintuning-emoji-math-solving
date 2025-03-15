@@ -122,7 +122,7 @@ def solve_emoji_math(equation):
     inputs = {k: v.to(device) for k, v in inputs.items()}
     print("Tokenized Input:", inputs)
     with torch.no_grad():
-        outputs = model.generate(**inputs, max_new_tokens=10, pad_token_id=tokenizer.eos_token_id, num_beams=10, early_stopping=True, no_repeat_ngram_size=2, do_sample=False, temperature=0.1, top_k=10, top_p=0.8)
+        outputs = model.generate(**inputs, max_new_tokens=10, pad_token_id=tokenizer.eos_token_id, num_beams=10, early_stopping=True, no_repeat_ngram_size=2, do_sample=False, temperature=0.1)
     result = tokenizer.decode(outputs[0], skip_special_tokens=True)
     print("Raw Model Output:", result)
     return result.split("->")[1].strip()
