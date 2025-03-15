@@ -8,4 +8,5 @@ numpy
 scipy
 scikit-learn
 accelerate
+asyncio
 
