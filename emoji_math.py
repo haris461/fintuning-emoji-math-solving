@@ -5,6 +5,7 @@ import requests
 import zipfile
 import asyncio
 from transformers import AutoModelForCausalLM, AutoTokenizer
+print("Model path:", os.path.abspath(MODEL_SUBDIR))
 # Ensure an event loop is running
 try:
     asyncio.get_running_loop()
