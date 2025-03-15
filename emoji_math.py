@@ -37,8 +37,8 @@ def download_and_extract_model():
 @st.cache_resource
 def load_model():
     download_and_extract_model()
-    model = AutoModelForCausalLM.from_pretrained(MODEL_DIR)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_SUBDIR)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     return model, tokenizer, device
