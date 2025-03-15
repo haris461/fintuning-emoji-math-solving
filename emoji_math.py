@@ -3,7 +3,13 @@ import torch
 import os
 import requests
 import zipfile
+import asyncio
 from transformers import AutoModelForCausalLM, AutoTokenizer
+# Ensure an event loop is running
+try:
+    asyncio.get_running_loop()
+except RuntimeError:
+    asyncio.run(asyncio.sleep(0))  
 
 # Define model URL and directory
 MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/emoji-math-model.zip"  
