@@ -131,7 +131,7 @@ def solve_emoji_math(equation):
     expected_value = total // count
     if f"{emoji} = {expected_value}" != solution:
         solution = f"{emoji} = {expected_value}"
-    return solution
+    
 
 
 # Solve button
