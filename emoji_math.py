@@ -13,6 +13,14 @@ MODEL_SUBDIR = os.path.join(MODEL_DIR, "checkpoint-108")  # Adjusted path
 
 print("Model path:", os.path.abspath(MODEL_SUBDIR))
 
+# Debugging: Check model directory files
+if os.path.exists(MODEL_DIR):
+    print("Files in model directory:", os.listdir(MODEL_DIR))
+if os.path.exists(MODEL_SUBDIR):
+    print("Files in checkpoint directory:", os.listdir(MODEL_SUBDIR))
+else:
+    print("Checkpoint folder missing")
+
 # Ensure an event loop is running
 try:
     asyncio.get_running_loop()
@@ -44,7 +52,7 @@ def download_and_extract_model():
 @st.cache_resource
 def load_model():
     download_and_extract_model()  # Ensure model is available
-    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR, local_files_only=True)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_SUBDIR)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -174,6 +182,3 @@ st.sidebar.markdown("🚗 + 🚗 = <span class='white-number'>16</span>", unsafe
 st.sidebar.markdown("🐱 + 🐱 = <span class='white-number'>10</span>", unsafe_allow_html=True)
 st.sidebar.markdown("🍔 + 🍔 = <span class='white-number'>14</span>", unsafe_allow_html=True)
 st.sidebar.markdown("🏡 + 🏡 + 🏡 = <span class='white-number'>21</span>", unsafe_allow_html=True)
-
-
-
