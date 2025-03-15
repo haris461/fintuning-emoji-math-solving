@@ -5,23 +5,25 @@ import requests
 import zipfile
 import asyncio
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Define model URL and directory
+MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/emoji-math-model.zip"
+MODEL_DIR = "./emoji-math-model"
+MODEL_SUBDIR = os.path.join(MODEL_DIR, "checkpoint-108")  # Adjusted path
+
 print("Model path:", os.path.abspath(MODEL_SUBDIR))
+
 # Ensure an event loop is running
 try:
     asyncio.get_running_loop()
 except RuntimeError:
-    asyncio.run(asyncio.sleep(0))  
-
-# Define model URL and directory
-MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/emoji-math-model.zip"  
-MODEL_DIR = "./emoji-math-model"
-MODEL_SUBDIR = os.path.join(MODEL_DIR, "checkpoint-108")  # Adjusted path
+    asyncio.run(asyncio.sleep(0))
 
 # Function to download and extract model if not available
 def download_and_extract_model():
     """Downloads and extracts the model if it doesn't exist locally."""
     zip_path = "emoji-math-model.zip"
-
+    
     if not os.path.exists(MODEL_SUBDIR):
         os.makedirs(MODEL_DIR, exist_ok=True)
         
@@ -42,7 +44,7 @@ def download_and_extract_model():
 @st.cache_resource
 def load_model():
     download_and_extract_model()  # Ensure model is available
-    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR,  local_files_only=True)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR, local_files_only=True)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_SUBDIR)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
@@ -59,20 +61,17 @@ st.markdown(
             background-color: #000000;
             color: white;
         }
-
         .title {
             text-align: center;
             font-size: 40px;
             font-weight: bold;
             color: #FFD700;
         }
-
         .subtitle {
             text-align: center;
             font-size: 18px;
             color: #BBBBBB;
         }
-
         .stTextInput>div>div>input {
             border-radius: 8px;
             border: 2px solid #FFD700;
@@ -81,7 +80,6 @@ st.markdown(
             font-size: 18px;
             background-color: #222222;
         }
-
         .stButton>button {
             background-color: #FFD700;
             color: black;
@@ -91,41 +89,33 @@ st.markdown(
             font-weight: bold;
             border: none;
         }
-
         .stButton>button:hover {
             background-color: #FFC107;
         }
-
         [data-testid="stSidebar"] {
             background-color: #1E1E1E;
             color: white;
         }
-
         [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p {
             color: white;
         }
-
         [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
             color: #FFD700;
         }
-
         .white-number {
             color: #FFFFFF !important;
         }
-
         .stAlert {
             background-color: #222222 !important;
             color: #FFD700 !important;
             border: 2px solid #FFD700;
         }
-
         .footer {
             text-align: center;
             font-size: 14px;
             color: #BBBBBB;
             margin-top: 20px;
         }
-
         .stText, .stMarkdown, .stTextInput label {
             color: white !important;
         }
@@ -185,7 +175,5 @@ st.sidebar.markdown("🐱 + 🐱 = <span class='white-number'>10</span>", unsafe
 st.sidebar.markdown("🍔 + 🍔 = <span class='white-number'>14</span>", unsafe_allow_html=True)
 st.sidebar.markdown("🏡 + 🏡 + 🏡 = <span class='white-number'>21</span>", unsafe_allow_html=True)
 
-# Footer
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<p class='footer'>💡 Developed with ❤️ using Streamlit</p>", unsafe_allow_html=True)
+
 
