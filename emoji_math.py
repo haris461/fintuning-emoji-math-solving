@@ -41,7 +41,7 @@ def download_and_extract_model():
 @st.cache_resource
 def load_model():
     download_and_extract_model()  # Ensure model is available
-    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR, trust_remote_code=True)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR,  local_files_only=True)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_SUBDIR)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
