@@ -6,7 +6,7 @@ import zipfile
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Define model URL and directory
-MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/model.zip"
+MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/emoji-math-model.zip"
 MODEL_DIR = "./emoji-math-model"
 
 # Function to download and extract model if not available
