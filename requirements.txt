@@ -8,4 +8,4 @@ numpy
 scipy
 scikit-learn
 accelerate
-zipFolder
+
