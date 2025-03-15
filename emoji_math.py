@@ -123,6 +123,15 @@ def solve_emoji_math(equation):
         outputs = model.generate(**inputs, max_new_tokens=10, pad_token_id=tokenizer.eos_token_id, num_beams=10, early_stopping=True, no_repeat_ngram_size=2, do_sample=False, temperature=0.1)
     result = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return result.split("->")[1].strip()
+    
+    emoji = equation.split()[0]
+    count = equation.count(emoji)
+    total = int(equation.split("=")[1].strip())
+    expected_value = total // count
+    if f"{emoji} = {expected_value}" != solution:
+        solution = f"{emoji} = {expected_value}"
+    return solution
+
 
 # Solve button
 if st.button("Solve"):
