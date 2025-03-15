@@ -118,7 +118,8 @@ equation = st.text_input("Enter the equation:", "🚗 + 🚗 + 🚗 + 🚗 = 20"
 def solve_emoji_math(equation):
     model.eval()
     input_text = f"{equation} ->"
-    inputs = tokenizer(input_text, return_tensors="pt", padding=True, truncation=True, max_length=128).to(device)
+    inputs = tokenizer(input_text, return_tensors="pt", padding=True, truncation=True, max_length=128)
+    inputs = {k: v.to(device) for k, v in inputs.items()}
     print("Tokenized Input:", inputs)
     with torch.no_grad():
         outputs = model.generate(**inputs, max_new_tokens=10, pad_token_id=tokenizer.eos_token_id, num_beams=10, early_stopping=True, no_repeat_ngram_size=2, do_sample=False, temperature=0.1, top_k=10, top_p=0.8)
