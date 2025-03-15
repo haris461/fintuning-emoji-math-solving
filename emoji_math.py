@@ -1,31 +1,39 @@
-import os
-import requests
 import streamlit as st
 import torch
+import os
+import requests
+import zipfile
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# Model Download Configuration
-MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/model.safetensors"
+# Define model URL and directory
+MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/model.zip"
 MODEL_DIR = "./emoji-math-model"
-MODEL_PATH = os.path.join(MODEL_DIR, "model.safetensors")
 
-# Function to download model from GitHub Release
-def download_model():
-    """Downloads the model if it doesn't exist locally."""
-    if not os.path.exists(MODEL_PATH):
+# Function to download and extract model if not available
+def download_and_extract_model():
+    """Downloads and extracts the model if it doesn't exist locally."""
+    zip_path = "./emoji-math-model.zip"
+
+    if not os.path.exists(MODEL_DIR):
         os.makedirs(MODEL_DIR, exist_ok=True)
-        st.info("📥 Downloading model from GitHub Release...")
+        
+        print("Downloading model from GitHub Release...")
         response = requests.get(MODEL_URL, stream=True)
-        with open(MODEL_PATH, "wb") as f:
+        with open(zip_path, "wb") as f:
             for chunk in response.iter_content(chunk_size=1024):
                 f.write(chunk)
-        st.success("✅ Model download complete!")
 
-# Load the model with caching
+        print("Download complete. Extracting...")
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            zip_ref.extractall(MODEL_DIR)
+        
+        os.remove(zip_path)  # Cleanup
+        print("Model extraction complete.")
+
+# Load model and tokenizer
 @st.cache_resource
 def load_model():
-    """Ensures the model is downloaded before loading it."""
-    download_model()  # Ensure model is available
+    download_and_extract_model()  # Ensure model is available
     model = AutoModelForCausalLM.from_pretrained(MODEL_DIR)
     tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -35,7 +43,7 @@ def load_model():
 # Load the model
 model, tokenizer, device = load_model()
 
-# Apply dark mode CSS styles
+# Apply dark mode CSS styles with gold accents
 st.markdown(
     """
     <style>
@@ -43,17 +51,20 @@ st.markdown(
             background-color: #000000;
             color: white;
         }
+
         .title {
             text-align: center;
             font-size: 40px;
             font-weight: bold;
             color: #FFD700;
         }
+
         .subtitle {
             text-align: center;
             font-size: 18px;
             color: #BBBBBB;
         }
+
         .stTextInput>div>div>input {
             border-radius: 8px;
             border: 2px solid #FFD700;
@@ -62,6 +73,7 @@ st.markdown(
             font-size: 18px;
             background-color: #222222;
         }
+
         .stButton>button {
             background-color: #FFD700;
             color: black;
@@ -71,28 +83,51 @@ st.markdown(
             font-weight: bold;
             border: none;
         }
+
         .stButton>button:hover {
             background-color: #FFC107;
         }
+
         [data-testid="stSidebar"] {
             background-color: #1E1E1E;
             color: white;
         }
-        .stText, .stMarkdown, .stTextInput label {
-            color: white !important;
+
+        [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] p {
+            color: white;
         }
+
+        [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3 {
+            color: #FFD700;
+        }
+
+        .white-number {
+            color: #FFFFFF !important;
+        }
+
+        .stAlert {
+            background-color: #222222 !important;
+            color: #FFD700 !important;
+            border: 2px solid #FFD700;
+        }
+
         .footer {
             text-align: center;
             font-size: 14px;
             color: #BBBBBB;
             margin-top: 20px;
         }
+
+        .stText, .stMarkdown, .stTextInput label {
+            color: white !important;
+        }
+
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Inference function with validation
+# Inference function
 def solve_emoji_math(equation):
     model.eval()
     input_text = f"{equation} ->"
@@ -113,7 +148,7 @@ def solve_emoji_math(equation):
     result = tokenizer.decode(outputs[0], skip_special_tokens=True)
     solution = result.split("->")[1].strip()
     
-    # Post-processing to ensure mathematical accuracy
+    # Post-processing for mathematical accuracy
     emoji = equation.split()[0]
     count = equation.count(emoji)
     total = int(equation.split("=")[1].strip())
@@ -136,13 +171,14 @@ if st.button("Solve"):
     else:
         st.error("❌ Invalid equation format. Use something like '🚗 + 🚗 = 10'")
 
-# Example Equations in Sidebar
+# Example Equations in Sidebar with white numbers
 st.sidebar.header("🔹 Example Inputs")
-st.sidebar.markdown("🚗 + 🚗 = **16**")
-st.sidebar.markdown("🐱 + 🐱 = **10**")
-st.sidebar.markdown("🍔 + 🍔 = **14**")
-st.sidebar.markdown("🏡 + 🏡 + 🏡 = **21**")
+st.sidebar.markdown("🚗 + 🚗 = <span class='white-number'>16</span>", unsafe_allow_html=True)
+st.sidebar.markdown("🐱 + 🐱 = <span class='white-number'>10</span>", unsafe_allow_html=True)
+st.sidebar.markdown("🍔 + 🍔 = <span class='white-number'>14</span>", unsafe_allow_html=True)
+st.sidebar.markdown("🏡 + 🏡 + 🏡 = <span class='white-number'>21</span>", unsafe_allow_html=True)
 
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p class='footer'>💡 Developed with ❤️ using Streamlit</p>", unsafe_allow_html=True)
+
