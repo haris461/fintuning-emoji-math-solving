@@ -37,8 +37,8 @@ def download_and_extract_model():
 @st.cache_resource
 def load_model():
     download_and_extract_model()
-    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_SUBDIR)
+    model = AutoModelForCausalLM.from_pretrained("./emoji-math-model")
+    tokenizer = AutoTokenizer.from_pretrained("./emoji-math-model")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     return model, tokenizer, device
