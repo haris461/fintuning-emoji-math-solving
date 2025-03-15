@@ -3,7 +3,6 @@ import torch
 import os
 import requests
 import zipfile
-import asyncio
 from transformers import AutoModelForCausalLM, AutoTokenizer, GPT2TokenizerFast
 
 # Define model URL and directory
@@ -20,12 +19,6 @@ if os.path.exists(MODEL_SUBDIR):
     print("Files in checkpoint directory:", os.listdir(MODEL_SUBDIR))
 else:
     print("Checkpoint folder missing")
-
-# Ensure an event loop is running
-try:
-    asyncio.get_running_loop()
-except RuntimeError:
-    asyncio.run(asyncio.sleep(0))
 
 # Function to download and extract model if not available
 def download_and_extract_model():
