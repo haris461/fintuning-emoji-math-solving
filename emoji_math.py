@@ -8,13 +8,14 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 # Define model URL and directory
 MODEL_URL = "https://github.com/haris461/fintuning-emoji-math-solving/releases/download/v1.0/emoji-math-model.zip"  
 MODEL_DIR = "./emoji-math-model"
+MODEL_SUBDIR = os.path.join(MODEL_DIR, "checkpoint-108")  # Adjusted path
 
 # Function to download and extract model if not available
 def download_and_extract_model():
     """Downloads and extracts the model if it doesn't exist locally."""
     zip_path = "emoji-math-model.zip"
 
-    if not os.path.exists(MODEL_DIR):
+    if not os.path.exists(MODEL_SUBDIR):
         os.makedirs(MODEL_DIR, exist_ok=True)
         
         print("Downloading model from GitHub Release...")
@@ -34,8 +35,8 @@ def download_and_extract_model():
 @st.cache_resource
 def load_model():
     download_and_extract_model()  # Ensure model is available
-    model = AutoModelForCausalLM.from_pretrained(MODEL_DIR ,trust_remote_code=True)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_SUBDIR, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_SUBDIR)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     return model, tokenizer, device
@@ -121,7 +122,6 @@ st.markdown(
         .stText, .stMarkdown, .stTextInput label {
             color: white !important;
         }
-
     </style>
     """,
     unsafe_allow_html=True
@@ -181,6 +181,4 @@ st.sidebar.markdown("🏡 + 🏡 + 🏡 = <span class='white-number'>21</span>",
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p class='footer'>💡 Developed with ❤️ using Streamlit</p>", unsafe_allow_html=True)
-
-
 
