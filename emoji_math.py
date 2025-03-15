@@ -4,7 +4,7 @@ import os
 import requests
 import zipfile
 import asyncio
-from transformers import AutoModelForCausalLM, AutoTokenizer, GPT2TokenizerFast
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 # Ensure proper asyncio event loop handling
 try:
@@ -135,5 +135,6 @@ if st.button("Solve"):
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p class='footer'>💡 Developed with ❤️ using Streamlit</p>", unsafe_allow_html=True)
+
 
     
