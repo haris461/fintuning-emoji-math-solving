@@ -12,7 +12,7 @@ MODEL_DIR = "./emoji-math-model"
 # Function to download and extract model if not available
 def download_and_extract_model():
     """Downloads and extracts the model if it doesn't exist locally."""
-    zip_path = "./emoji-math-model.zip"
+    zip_path = "emoji-math-model.zip"
 
     if not os.path.exists(MODEL_DIR):
         os.makedirs(MODEL_DIR, exist_ok=True)
