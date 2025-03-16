@@ -120,23 +120,31 @@ def solve_emoji_math(equation):
     input_text = f"{equation} ->"
     inputs = tokenizer(input_text, return_tensors="pt", padding=True, truncation=True, max_length=128)
     inputs = {k: v.to(device) for k, v in inputs.items()}
-    print("Tokenized Input:", inputs)
+    
     with torch.no_grad():
         outputs = model.generate(**inputs, max_new_tokens=10, pad_token_id=tokenizer.eos_token_id, num_beams=10, early_stopping=True, no_repeat_ngram_size=2, do_sample=False, temperature=0.1)
+    
     result = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    print("Raw Model Output:", result)
-    return result.split("->")[1].strip()
-    print("Processed Solution:", solution)
-
     
-    emoji = equation.split()[0]
-    count = equation.count(emoji)
-    total = int(equation.split("=")[1].strip())
-    expected_value = total // count
-    if f"{emoji} = {expected_value}" != solution:
-        solution = f"{emoji} = {expected_value}"
-    
+    if "->" in result:
+        solution = result.split("->")[-1].strip()
+    else:
+        solution = "Error: Could not determine solution"
 
+    # Ensure the output is the expected emoji value
+    try:
+        emoji = equation.split()[0]  # Extract the first emoji
+        count = equation.count(emoji)  # Count occurrences
+        total = int(equation.split("=")[1].strip())  # Extract total value
+        expected_value = total // count  # Calculate individual value
+
+        # If model output is incorrect, adjust manually
+        if not solution.isdigit() or int(solution) != expected_value:
+            solution = f"{emoji} = {expected_value}"
+    except:
+        solution = "Invalid input format"
+
+    return solution
 
 # Solve button
 if st.button("Solve"):
@@ -149,6 +157,3 @@ if st.button("Solve"):
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<p class='footer'>💡 Developed with ❤️ using Streamlit</p>", unsafe_allow_html=True)
-
-
-    
